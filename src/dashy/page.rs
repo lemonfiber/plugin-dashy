@@ -113,6 +113,7 @@ pub fn rendered(panels: &Panels) -> Result<String, Refused> {
             items: Vec::new(),
             widgets: vec![Widget {
                 kind: SYSTEM.to_owned(),
+                use_proxy: None,
                 options: None,
             }],
         });
@@ -204,9 +205,12 @@ struct Item {
 
 /// A widget as Dashy names it.
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 struct Widget {
     #[serde(rename = "type")]
     kind: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    use_proxy: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     options: Option<StatusPage>,
 }
@@ -234,11 +238,13 @@ fn item(entry: &Entry) -> Result<Item, Refused> {
     })
 }
 
-/// One entry's widget as Dashy reads it.
+/// One entry's widget as Dashy reads it, read through Dashy's own server, which reaches
+/// only the addresses the page names.
 fn entry_widget(widget: &EntryWidget) -> Result<Widget, Refused> {
     match widget {
         EntryWidget::StatusPage { url, page } => Ok(Widget {
             kind: STATUS_PAGE.to_owned(),
+            use_proxy: Some(true),
             options: Some(StatusPage {
                 host: origin(url)?,
                 slug: slug(page)?,

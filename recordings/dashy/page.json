@@ -1,5 +1,5 @@
 {
-  "recorded_from": "ghcr.io/lissy93/dashy@sha256:e8725dc24acc9a1d6f09c2ed0499b596af5a1b4eac8c83e912c213da06011356",
+  "recorded_from": "ghcr.io/lemonfiber/dashy@sha256:06e91ea4bc85f77253f3a5e728a397116e579000358e0fdaba5067ce939c2dff",
   "note": "The page Dashy serves its browser, asked of a fresh instance started from the plugin's own conf.yml: lemonfiber's title, and preventWriteToDisk set, so the page is the one lemonfiber wrote and Dashy holds it against saving.",
   "request": {"method": "GET", "path": "/conf.yml"},
   "response": {

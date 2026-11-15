@@ -91,6 +91,7 @@ fn every_group_entry_and_widget_is_written_where_dashy_reads_it() {
                     "widgets": [
                         {
                             "type": "uptime-kuma-status-page",
+                            "useProxy": true,
                             "options": {"host": "http://uptime-kuma:3001", "slug": "household"}
                         }
                     ]
