@@ -1,0 +1,14 @@
+{
+  "recorded_from": "ghcr.io/lissy93/dashy@sha256:e8725dc24acc9a1d6f09c2ed0499b596af5a1b4eac8c83e912c213da06011356",
+  "note": "The page Dashy serves its browser, asked of a fresh instance started from the plugin's own conf.yml: lemonfiber's title, and preventWriteToDisk set, so the page is the one lemonfiber wrote and Dashy holds it against saving.",
+  "request": {"method": "GET", "path": "/conf.yml"},
+  "response": {
+    "status": 200,
+    "headers": {"content-type": "text/yaml; charset=utf-8"},
+    "json": {
+      "appConfig": {"disableConfiguration": true, "preventWriteToDisk": true},
+      "pageInfo": {"title": "Home"},
+      "sections": []
+    }
+  }
+}

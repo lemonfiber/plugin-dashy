@@ -1,4 +1,4 @@
-# AGENTS.md — plugin-template
+# AGENTS.md — plugin-dashy
 
 > **Start at the roadmap and board on [lemonfiber.app](https://lemonfiber.app),
 > rendered from the report of where every unreleased version stands. Then the
@@ -9,69 +9,57 @@
 
 ## What this repo is
 
-The plugin an author copies, and the **canonical home of the CI harness**.
-`plugin-komga`, `plugin-uptime-kuma`, `plugin-plex` and `lemonfiber-plugins` carry
-byte-identical copies of `.github/reader/`, and the ones with a `harness` job fail
-when their copy drifts from this one. Change the harness here, then copy it out;
-changing it there fails.
-
-The plugin itself describes Kavita, and it describes something real on purpose:
-`F10-R7` asks for a template that validates and proves *unmodified*, and a
-template whose proofs are invented teaches an author to invent proofs.
-
-`bundled-part/` is the variant a first-party part of the stack starts from: one
-service, no adapter and no Python, its CI spec's `first-party-plugin` workflow.
-It describes SABnzbd as the stack carries it. `docs/development.md` says what a
-part's repository takes from it.
-
-`built-part/` is the variant for a part whose image lemonfiber builds from its
-upstream's, published and pinned by spec's `first-party-image` workflow. It
-describes Door, built from Caddy with the file capability taken off its binary.
+Dashy as a first-party lemonfiber plugin, offered in Homepage's place as the dashboard:
+`plugin.toml` and the adapter that speaks the `dashboard.show@1` contract beside Dashy,
+by writing the page it reads, `conf.yml`, into its configuration directory. The adapter
+is the Rust crate at the root, built on `lemonfiber-adapter-kit` from the core at the
+commit `Cargo.toml` pins, into the image the `Dockerfile` builds. `release.yml`
+publishes that image from every commit on `main` and from the train's tag. The
+[bundle contract](https://github.com/lemonfiber/spec/blob/main/20-architecture/contracts/bundle.md)
+says how the catalogue pins this repository and how lemonfiber carries it.
 
 ## The rules you cannot break
 
-- **Nothing here executes.** A plugin is declarative data (`F3-R1`), and
-  contributed code is never run, under any opt-in (`F3-R6`). The Python under
-  `.github/reader/` is CI harness and is not part of what an operator installs:
-  it fetches the lemonfiber release `targets.toml` names, or builds the commit
-  of `main` it names, and asks it.
-- **The plugin is `plugin.toml` and `fixtures/`.** Proofs, claims and
-  contributions live in the manifest, not beside it: an installer reads one file,
-  and something the installer never reads cannot be what `F3-R4` refuses an
-  install over.
-- **The image is named by digest** (`F3-R8`). Moving the pin means re-recording
-  every fixture against the new image in the same change.
-- **A proof asserts a body, never only a status.** Docker's port proxy accepts
-  before anything inside is listening. The one exception is a refusal: a `401`
-  is not something a port proxy can produce.
-- **A proof that could not be run is unproven** (`F3-R5`), never a pass, and
-  no declaration excuses it (`F10-R16`). Failing as declared is its own
-  verdict, written apart from passed and failed and never counted as passed
-  (`F10-R13`).
-- **Sonar's ignores live in the SonarCloud project, never in a file here.**
-  Automatic analysis reads no issue ignore from the repository, so a repository
-  made from this one needs `docker:S8431` ignored on `**/Dockerfile*` in its
-  project's settings: every image is named by tag and digest (ADR-0025).
-- **No field beyond the contract's set.** A manifest carrying one is refused by
-  name rather than ignored (`ARCH-R84`).
-- **The format is lemonfiber's to describe, and nothing here describes it.**
-  `reader.py` carries no list of tables, fields, kinds, closed sets or capability
-  names, and decides no verdict: `F10-R2` forbids a second description of the
-  format, and every verdict CI reports is `lemonfiber plugin claims`'s own.
-
-## Checks
-
-```
-just ci
-```
-
-Every gate CI runs over the contents of this repository, in CI's order. The jobs
-it leaves out are named in the `justfile` beside the recipe, with what covers
-each. `just` lists the recipes it is made of.
-
-`proofs.json` is generated and committed; CI fails when the committed one is not
-what the run would write. `reader.py proofs` writes it on every run.
-
-## Before you open a PR
-
-`just ci` turns this clone's git hooks on as its first step.
+- **The plugin id is the service's id** (`ARCH-R266`). The container, the
+  configuration directory, the settings and the journal keep their names. It is a
+  substitute: no service declares `replaces`.
+- **Dashy runs `lemonfiber-dashy`'s image once it is pinned** (`OPS-R93`). That image
+  holds Dashy's `/cors-proxy` and `/status-check` to the addresses the page names and
+  refuses every ping. Until then the manifest runs Dashy's own image with
+  `DISABLE_PROXY_ENDPOINTS`, which turns all three off, a proof holds each one to
+  refusing, and no status page is written with `useProxy`.
+- **Every page sets `appConfig.preventWriteToDisk` and `disableConfiguration`**, the
+  one this plugin ships and every one the adapter writes, and `dashy.save-refused`
+  holds Dashy to refusing a save. Dashy's REST API stays off: `ENABLE_API` is never set.
+- **Its proofs' recordings sit under `recordings/dashy/`**, and its starting
+  files under `config/dashy/` (`ARCH-R271`).
+- **Every service declares `reaches` and `asks_for`** (`ARCH-R270`).
+- **No Python here.** The reader is spec's `first-party-plugin` workflow's.
+- **No `unwrap`, `expect`, `panic` or indexing** outside tests. The lints in
+  `Cargo.toml` are the core's.
+- **Every file in Dashy's configuration directory is reached through
+  `lemonfiber_adapter_kit::shared`**, so a link, a hardlink or a file that is not
+  plain, which Dashy could plant there, is refused by name or replaced and
+  never written through.
+- **Every value is held to its grammar before anything is written**: an address
+  is `http` or `https`, an icon a plain name or such an address, and text carries
+  no control character, no markup (`<`, `>`, `"`, `'`, `` ` ``, `&`) and none of the
+  variables Dashy reads from its environment (`DASHY_`, `VITE_APP_`, `VUE_APP_`).
+- **Every address Dashy's server asks is a service on the stack's network.** What the
+  adapter writes as a check or a status page's address is what `lemonfiber-dashy`'s
+  server is let reach, so each is parsed and held to `http` or `https`, no account,
+  no fragment, and a host that is one label of a service's name: never an IP address,
+  a name a container's hosts file holds (`localhost` and the `ip6-` names), a
+  container's id (12 or 64 lowercase hexadecimal characters), a metadata or cluster
+  name a host's search domains complete (`metadata`, `instance-data`, `kubernetes`)
+  or a public name. What is written is the parsed
+  address, never the raw one. A status page is an origin, `scheme://host[:port]`, with
+  no path or query, and its name is lowercase letters, digits and `-`, so the two
+  addresses read from it name no other path.
+- **A page changed by hand is never written over.** One that is neither the page
+  last written nor the one this plugin ships is named in the refusal.
+- **The core's crates move with the train.** The `rev` in `Cargo.toml` is the
+  core commit `targets.toml` names, the same for every `lemonfiber-*` crate.
+- **Moving Dashy's digest** means recording every response again against the
+  new image in the same change, moving `RELEASE` and `DIGEST` in
+  `src/adapter.rs` with it, and committing the `proofs.json` the checks write.
