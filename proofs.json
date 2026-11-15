@@ -1,34 +1,34 @@
 {
-  "lemonfiber": "0.16.0",
+  "lemonfiber": "ec332f86b6c4a0653264bb171c62f545db29c2e4",
   "against": "recordings",
   "proofs": [
     {
-      "id": "kavita.serves",
+      "id": "dashy.page",
       "kind": "proof",
       "outcome": "passed",
       "detail": ""
     },
     {
-      "id": "kavita.status-is-not-an-answer",
+      "id": "dashy.save-refused",
       "kind": "proof",
       "outcome": "passed",
       "detail": ""
     },
     {
-      "id": "media.serve/guarded",
-      "kind": "probe",
+      "id": "dashy.status-check-off",
+      "kind": "proof",
       "outcome": "passed",
       "detail": ""
     },
     {
-      "id": "media.serve/catalogue",
-      "kind": "probe",
+      "id": "dashy.ping-check-off",
+      "kind": "proof",
       "outcome": "passed",
       "detail": ""
     },
     {
-      "id": "kavita:settings-guarded",
-      "kind": "check",
+      "id": "dashy.cors-proxy-off",
+      "kind": "proof",
       "outcome": "passed",
       "detail": ""
     }

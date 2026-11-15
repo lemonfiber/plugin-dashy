@@ -1,0 +1,10 @@
+{
+  "recorded_from": "ghcr.io/lissy93/dashy@sha256:e8725dc24acc9a1d6f09c2ed0499b596af5a1b4eac8c83e912c213da06011356",
+  "note": "A request to Dashy's forwarding endpoint by a caller presenting nothing, on a fresh instance started from the plugin's own conf.yml with DISABLE_PROXY_ENDPOINTS. A refusal naming the switch is the pass: the handler would have answered 400 for the missing Target-URL header, so the switch stands ahead of anything the handler reads, whichever address a caller names.",
+  "request": {"method": "GET", "path": "/cors-proxy"},
+  "response": {
+    "status": 403,
+    "headers": {"content-type": "application/json; charset=utf-8"},
+    "json": {"error": "This feature has been disabled by your administrator"}
+  }
+}

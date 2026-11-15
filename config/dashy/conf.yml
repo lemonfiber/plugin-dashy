@@ -1,0 +1,10 @@
+{
+  "pageInfo": {
+    "title": "Home"
+  },
+  "appConfig": {
+    "preventWriteToDisk": true,
+    "disableConfiguration": true
+  },
+  "sections": []
+}

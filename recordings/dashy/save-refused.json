@@ -1,0 +1,10 @@
+{
+  "recorded_from": "ghcr.io/lissy93/dashy@sha256:e8725dc24acc9a1d6f09c2ed0499b596af5a1b4eac8c83e912c213da06011356",
+  "note": "A save posted to Dashy's own endpoint by a caller presenting nothing, on a fresh instance started from the plugin's own conf.yml. A refusal is the pass: the household reaches the page without signing in, so a save that succeeded would let any device rewrite the links everybody follows.",
+  "request": {"method": "POST", "path": "/config-manager/save"},
+  "response": {
+    "status": 403,
+    "headers": {"content-type": "application/json; charset=utf-8"},
+    "json": {"error": "Editing config has been disabled by your administrator"}
+  }
+}
