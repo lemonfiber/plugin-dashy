@@ -13,9 +13,9 @@ forms       = ["full"]
 [[service]]
 id          = "dashy"
 name        = "Dashy"
-image       = "ghcr.io/lissy93/dashy"
-digest      = "sha256:e8725dc24acc9a1d6f09c2ed0499b596af5a1b4eac8c83e912c213da06011356"
-tag         = "4.9.0"
+image       = "ghcr.io/lemonfiber/dashy"
+digest      = "sha256:06e91ea4bc85f77253f3a5e728a397116e579000358e0fdaba5067ce939c2dff"
+tag         = "main-112e17a363e9"
 port        = 4000
 bind        = "lan"
 listens     = 8080
@@ -23,12 +23,26 @@ health      = { kind = "http", path = "/healthz", timeout_s = 60 }
 criticality = "enhancing"
 memory_mib  = 250
 reaches     = ""
-asks_for    = "Nothing. Its server's status check, ping check and proxy are turned off, so it asks no address anywhere."
+asks_for    = "Nothing beyond this machine. Its server asks only the status-check and status-page addresses its page names, each a service on the stack's internal network, to show whether each service is up, follows no redirect and pings nothing."
 config_path = "/app/user-data"
 user_mode   = "uid"
 
-[service.env]
-DISABLE_PROXY_ENDPOINTS = "true"
+[[service]]
+id            = "dashy-adapter"
+name          = "Dashy adapter"
+image         = "ghcr.io/lemonfiber/dashy-adapter"
+digest        = "sha256:b30a235aebc234747f10995c15d7c07317299d0e646cc7768dfd49c754e39133"
+tag           = "main-00f96c0d2f20"
+criticality   = "optional"
+reaches       = ""
+asks_for      = "Nothing beyond this machine. It answers lemonfiber's dashboard.show contract by writing the groups and widgets lemonfiber hands it into the page Dashy, beside it, reads."
+config_path   = "/config"
+listens       = 8080
+speaks        = ["dashboard.show@1"]
+fronts        = "dashy"
+provides      = ["dashboard.show"]
+shares_config = "/dashy"
+posture       = "confined"
 
 [[proof]]
 id      = "dashy.page"
@@ -59,44 +73,31 @@ Dashy refuses every save.
 """
 
 [[proof]]
-id      = "dashy.status-check-off"
+id      = "dashy.unnamed-refused"
 service = "dashy"
-title   = "Dashy's server checks no address it is handed"
-request = { method = "GET", path = "/status-check?url=https%3A%2F%2Fexample.com%2F" }
-expect  = { status = 403, json = { error = "This feature has been disabled by your administrator" } }
-fixture = "recordings/dashy/status-check-off.json"
+title   = "Dashy's server asks no address its page does not name"
+request = { method = "GET", path = "/status-check?url=http%3A%2F%2Fsonarr%3A8989%2Fping" }
+expect  = { status = 200, json = { "/successStatus" = false, "/message" = "❌ Service Unavailable: Server resulted in EBLOCKED " } }
+fixture = "recordings/dashy/unnamed-refused.json"
 why     = """
-Dashy's /status-check fetches whatever address its caller names, and the
-household reaches the page without signing in, so it would let any device on
-the network make this machine ask any address. DISABLE_PROXY_ENDPOINTS turns
-it off, and the refusal names that switch rather than a failed fetch.
+Dashy's own /status-check fetches whatever address its caller names, and the
+household reaches the page without signing in. lemonfiber-dashy's image asks
+only what the page names, so a service on the stack's network the page does
+not name is refused before anything is asked, where Dashy's own image would
+have asked it.
 """
 
 [[proof]]
-id      = "dashy.ping-check-off"
+id      = "dashy.pings-nothing"
 service = "dashy"
-title   = "Dashy's server pings no host it is handed"
+title   = "Dashy's server pings no host"
 request = { method = "GET", path = "/ping-check?host=example.com" }
-expect  = { status = 403, json = { error = "This feature has been disabled by your administrator" } }
-fixture = "recordings/dashy/ping-check-off.json"
+expect  = { status = 200, json = { "/successStatus" = false, "/message" = "This dashboard pings nothing." } }
+fixture = "recordings/dashy/pings-nothing.json"
 why     = """
-Dashy's /ping-check pings whatever host its caller names, for anybody who
-reaches the page. DISABLE_PROXY_ENDPOINTS turns it off, and the refusal names
-that switch rather than a host that did not answer.
-"""
-
-[[proof]]
-id      = "dashy.cors-proxy-off"
-service = "dashy"
-title   = "Dashy's server forwards no request"
-request = { method = "GET", path = "/cors-proxy" }
-expect  = { status = 403, json = { error = "This feature has been disabled by your administrator" } }
-fixture = "recordings/dashy/cors-proxy-off.json"
-why     = """
-Dashy's /cors-proxy forwards any request to the address in its Target-URL
-header, for anybody who reaches the page. DISABLE_PROXY_ENDPOINTS turns it
-off ahead of the handler: the refusal names that switch before any header is
-read, where the handler would have answered that no Target-URL was given.
+Dashy's own /ping-check pings whatever host its caller names, for anybody who
+reaches the page. lemonfiber-dashy's image answers every ping with the same
+refusal, which names no host and so tells nobody what is there.
 """
 
 [[ask]]

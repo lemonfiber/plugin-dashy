@@ -10,5 +10,7 @@
 
 requirement = [
   { id = "F14-R15", state = "partial", evidence = ["Cargo.toml::lemonfiber-adapter-kit", "Dockerfile", ".github/workflows/release.yml::adapter-release.yml"] },
-  { id = "F14-R31", state = "partial", evidence = ["plugin.toml", "src/dashy.rs", "src/dashy/page.rs"] },
+  { id = "F14-R6", state = "partial", evidence = ["src/adapter.rs", "tests/conformance.rs::every_case_of_every_contract_spoken_is_recorded_and_read_as_the_core_reads_it"] },
+  { id = "F14-R13", state = "partial", evidence = ["src/adapter.rs", "tests/manifest.rs::the_adapter_names_the_image_of_the_dashy_it_fronts"] },
+  { id = "F14-R31", state = "partial", evidence = ["plugin.toml", "src/dashy.rs", "src/dashy/page.rs", "conformance/dashboard.show@1"] },
 ]

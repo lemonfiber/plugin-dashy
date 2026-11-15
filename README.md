@@ -16,11 +16,9 @@ configuration directory, which it shares.
 Dashy's own server answers anybody who reaches the page, and its `/cors-proxy`,
 `/status-check` and `/ping-check` reach any address. The image lemonfiber runs is
 [`lemonfiber-dashy`](https://github.com/lemonfiber/lemonfiber-dashy)'s, which holds those
-endpoints to the addresses the page names. Until that image is pinned here, the
-manifest runs Dashy's own image with `DISABLE_PROXY_ENDPOINTS`, so it proxies nothing,
-and `dashy.status-check-off`, `dashy.ping-check-off` and `dashy.cors-proxy-off` hold each
-of the three to refusing. A status page is then read by the browser rather than through
-Dashy's server.
+endpoints to the addresses the page names, follows no redirect and pings nothing.
+`dashy.unnamed-refused` holds it to refusing a service the page does not name, and
+`dashy.pings-nothing` to refusing every ping.
 Every page the adapter writes, and the one this plugin ships, sets
 `appConfig.preventWriteToDisk`, so Dashy refuses to save the page for anybody.
 
@@ -33,6 +31,7 @@ Every page the adapter writes, and the one this plugin ships, sets
 | `Dockerfile` | The adapter's image |
 | `config/dashy/` | The page Dashy starts with, written into its configuration directory |
 | `recordings/dashy/` | The responses its proofs are proved against |
+| `conformance/` | One recording per case of `dashboard.show@1`, answered by the adapter in front of the pinned Dashy |
 | `targets.toml` | The lemonfiber its checks run against, and the core the adapter is built on |
 | `proofs.json` | What those checks said, committed |
 

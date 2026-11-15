@@ -23,11 +23,10 @@ says how the catalogue pins this repository and how lemonfiber carries it.
 - **The plugin id is the service's id** (`ARCH-R266`). The container, the
   configuration directory, the settings and the journal keep their names. It is a
   substitute: no service declares `replaces`.
-- **Dashy runs `lemonfiber-dashy`'s image once it is pinned** (`OPS-R93`). That image
-  holds Dashy's `/cors-proxy` and `/status-check` to the addresses the page names and
-  refuses every ping. Until then the manifest runs Dashy's own image with
-  `DISABLE_PROXY_ENDPOINTS`, which turns all three off, a proof holds each one to
-  refusing, and no status page is written with `useProxy`.
+- **Dashy runs `lemonfiber-dashy`'s image** (`OPS-R93`). That image holds Dashy's
+  `/cors-proxy` and `/status-check` to the addresses the page names, follows no
+  redirect and refuses every ping; `dashy.unnamed-refused` and `dashy.pings-nothing`
+  hold it there.
 - **Every page sets `appConfig.preventWriteToDisk` and `disableConfiguration`**, the
   one this plugin ships and every one the adapter writes, and `dashy.save-refused`
   holds Dashy to refusing a save. Dashy's REST API stays off: `ENABLE_API` is never set.

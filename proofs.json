@@ -15,19 +15,13 @@
       "detail": ""
     },
     {
-      "id": "dashy.status-check-off",
+      "id": "dashy.unnamed-refused",
       "kind": "proof",
       "outcome": "passed",
       "detail": ""
     },
     {
-      "id": "dashy.ping-check-off",
-      "kind": "proof",
-      "outcome": "passed",
-      "detail": ""
-    },
-    {
-      "id": "dashy.cors-proxy-off",
+      "id": "dashy.pings-nothing",
       "kind": "proof",
       "outcome": "passed",
       "detail": ""
