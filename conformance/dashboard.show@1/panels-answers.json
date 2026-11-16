@@ -1,5 +1,5 @@
 {
-  "recorded_from": "ghcr.io/lemonfiber/dashy@sha256:06e91ea4bc85f77253f3a5e728a397116e579000358e0fdaba5067ce939c2dff",
+  "recorded_from": "ghcr.io/lemonfiber/dashy@sha256:5e41cb355a4da86e695fcf30fe6545735754bae4be4ba746c55ebf2fa15bac53",
   "note": "The panel list last applied, read back from the record the adapter keeps beside Dashy's page, which both still match.",
   "request": {"method": "POST", "path": "/lemonfiber/dashboard.show/v1/panels", "accept": "application/json"},
   "response": {
