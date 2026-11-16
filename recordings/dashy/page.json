@@ -8,7 +8,16 @@
     "json": {
       "appConfig": {"disableConfiguration": true, "preventWriteToDisk": true},
       "pageInfo": {"title": "Home"},
-      "sections": []
+      "sections": [
+        {
+          "items": [
+            {"description": "This page", "icon": "hl-dashy", "statusCheck": true, "statusCheckUrl": "http://dashy:8080/healthz", "title": "Dashy", "url": "http://dashy:8080/"},
+            {"description": "Forwards only what this page names", "icon": "hl-dashy", "statusCheck": true, "statusCheckUrl": "http://dashy:8080/cors-proxy", "title": "Proxy", "url": "http://dashy:8080/"},
+            {"description": "The folder of icons this page draws from", "icon": "hl-dashy", "statusCheck": true, "statusCheckUrl": "http://dashy:8080/item-icons", "title": "Icons", "url": "http://dashy:8080/item-icons/"}
+          ],
+          "name": "This dashboard"
+        }
+      ]
     }
   }
 }

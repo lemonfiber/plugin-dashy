@@ -17,8 +17,11 @@ Dashy's own server answers anybody who reaches the page, and its `/cors-proxy`,
 `/status-check` and `/ping-check` reach any address. The image lemonfiber runs is
 [`lemonfiber-dashy`](https://github.com/lemonfiber/lemonfiber-dashy)'s, which holds those
 endpoints to the addresses the page names, follows no redirect and pings nothing.
-`dashy.unnamed-refused` holds it to refusing a service the page does not name, and
-`dashy.pings-nothing` to refusing every ping.
+`dashy.unnamed-refused` holds it to refusing a service the page does not name,
+`dashy.named-check-answers` to still asking one the page names,
+`dashy.redirect-not-followed` to following no redirect, and `dashy.pings-nothing` to
+refusing every ping. The page this plugin ships names Dashy's own addresses for those
+proofs, until the adapter's first write replaces it.
 Every page the adapter writes, and the one this plugin ships, sets
 `appConfig.preventWriteToDisk`, so Dashy refuses to save the page for anybody.
 

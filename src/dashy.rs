@@ -130,6 +130,7 @@ impl Showing for Dashy {
         Ok(written.unwrap_or(Panels {
             groups: Vec::new(),
             widgets: Vec::new(),
+            hosts: Vec::new(),
         }))
     }
 }
@@ -137,10 +138,12 @@ impl Showing for Dashy {
 /// What a refusal of the panel list says.
 fn said(why: &Refused) -> String {
     match why {
-        Refused::Address(value) => format!("{value:?} is not an http or https address"),
+        Refused::Address(value) => format!(
+            "{value:?} is not an http or https address, or carries a part its place does not"
+        ),
         Refused::Icon(value) => format!("{value:?} is not an icon's name or address"),
         Refused::Unreached(value) => format!(
-            "{value:?} is not a service on the stack's network, the only addresses Dashy's server is let reach"
+            "{value:?} is not on a host the panel list names, the services on the stack's network Dashy's server alone is let reach"
         ),
         Refused::Text(value) => {
             format!("{value:?} holds what Dashy would expand, markup, or a character no label carries")

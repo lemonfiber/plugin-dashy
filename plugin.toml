@@ -100,6 +100,37 @@ reaches the page. lemonfiber-dashy's image answers every ping with the same
 refusal, which names no host and so tells nobody what is there.
 """
 
+[[proof]]
+id      = "dashy.named-check-answers"
+service = "dashy"
+title   = "Dashy's server still checks an address its page names"
+request = { method = "GET", path = "/status-check?url=http%3A%2F%2Fdashy%3A8080%2Fcors-proxy" }
+expect  = { status = 200, json = { "/successStatus" = false, "/message" = "❌ Service Error - 400 - Bad Request" } }
+fixture = "recordings/dashy/named-check-answers.json"
+why     = """
+A dashboard whose server refused every address would hold nobody to anything
+and show every service down. The page the plugin ships names Dashy's own
+forwarding endpoint, which answers a request naming no address with 400, and
+Dashy's server asks it and reports that answer, where an address the page does
+not name is refused before it is asked. So the refusals beside this one are
+the page's names at work rather than a server that asks nothing.
+"""
+
+[[proof]]
+id      = "dashy.redirect-not-followed"
+service = "dashy"
+title   = "Dashy's server follows no redirect from an address its page names"
+request = { method = "GET", path = "/status-check?url=http%3A%2F%2Fdashy%3A8080%2Fitem-icons" }
+expect  = { status = 200, json = { "/successStatus" = false, "/message" = "❌ Service Unavailable: Server resulted in EBLOCKED " } }
+fixture = "recordings/dashy/redirect-not-followed.json"
+why     = """
+An address the page names could answer with a redirect to one it does not, and
+a server following it would reach whatever the redirect says. The page the
+plugin ships names Dashy's icon folder, which Dashy answers with a 301 to the
+same folder with a trailing slash, and Dashy's server refuses to follow even
+that.
+"""
+
 [[ask]]
 service    = "dashy"
 capability = "proxy.front"

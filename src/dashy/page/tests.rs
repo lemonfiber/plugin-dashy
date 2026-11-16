@@ -14,6 +14,15 @@ fn entry() -> Entry {
     }
 }
 
+const HOSTS: [&str; 6] = [
+    "jellyfin",
+    "uptime-kuma",
+    "media",
+    "gluetun",
+    "3f4e5d6c7b8",
+    "mediaserver12",
+];
+
 fn panels(entries: Vec<Entry>, widgets: Vec<PageWidget>) -> Panels {
     Panels {
         groups: vec![Group {
@@ -21,6 +30,7 @@ fn panels(entries: Vec<Entry>, widgets: Vec<PageWidget>) -> Panels {
             entries,
         }],
         widgets,
+        hosts: HOSTS.map(str::to_owned).to_vec(),
     }
 }
 
@@ -120,11 +130,42 @@ fn a_page_with_no_widgets_has_no_search_and_no_machine_section() {
 }
 
 #[test]
-fn the_empty_panel_list_is_the_page_the_plugin_ships() {
+fn the_page_the_plugin_ships_is_the_dashboard_checking_itself() {
+    let own = |name: &str, description: &str, link: &str, check: &str| Entry {
+        name: name.to_owned(),
+        icon: "dashy.png".to_owned(),
+        link: link.to_owned(),
+        description: description.to_owned(),
+        check: Some(check.to_owned()),
+        widget: None,
+    };
     assert_eq!(
         rendered(&Panels {
-            groups: Vec::new(),
+            groups: vec![Group {
+                name: "This dashboard".to_owned(),
+                entries: vec![
+                    own(
+                        "Dashy",
+                        "This page",
+                        "http://dashy:8080/",
+                        "http://dashy:8080/healthz"
+                    ),
+                    own(
+                        "Proxy",
+                        "Forwards only what this page names",
+                        "http://dashy:8080/",
+                        "http://dashy:8080/cors-proxy"
+                    ),
+                    own(
+                        "Icons",
+                        "The folder of icons this page draws from",
+                        "http://dashy:8080/item-icons/",
+                        "http://dashy:8080/item-icons"
+                    ),
+                ],
+            }],
             widgets: Vec::new(),
+            hosts: vec!["dashy".to_owned()],
         })
         .ok()
         .as_deref(),
@@ -295,6 +336,7 @@ fn a_check_or_status_page_off_the_stacks_network_is_refused_naming_it() {
         "http://[fd00:ec2::254]/",
         "http://metadata.google.internal/computeMetadata/v1",
         "http://metadata/computeMetadata/v1",
+        "http://sonarr:8989/ping",
         "http://METADATA/computeMetadata/v1",
         "http://instance-data/latest/meta-data",
         "https://kubernetes:443/api",
@@ -430,6 +472,61 @@ fn a_status_page_name_that_could_name_another_path_is_refused_naming_it() {
             refusal(monitored),
             Some(Refused::Text(page.to_owned())),
             "{page}"
+        );
+    }
+}
+
+#[test]
+fn a_host_the_panel_list_names_is_still_held_to_one_label() {
+    let mut checked = entry();
+    checked.check = Some("http://media.lan:8096/health".to_owned());
+    let mut asked = panels(vec![checked], Vec::new());
+    asked.hosts.push("media.lan".to_owned());
+
+    assert_eq!(
+        rendered(&asked).err(),
+        Some(Refused::Unreached(
+            "http://media.lan:8096/health".to_owned()
+        ))
+    );
+}
+
+#[test]
+fn a_panel_list_naming_no_hosts_lets_no_check_through() {
+    let mut asked = panels(vec![entry()], Vec::new());
+    asked.hosts.clear();
+
+    assert_eq!(
+        rendered(&asked).err(),
+        Some(Refused::Unreached("http://jellyfin:8096/health".to_owned()))
+    );
+}
+
+#[test]
+fn a_name_that_is_no_service_is_refused_even_where_the_panel_list_names_it() {
+    for name in [
+        "metadata",
+        "instance-data",
+        "kubernetes",
+        "localhost",
+        "ip6-localhost",
+        "ip6-loopback",
+        "ip6-localnet",
+        "ip6-mcastprefix",
+        "ip6-allnodes",
+        "ip6-allrouters",
+        "3f4e5d6c7b8a",
+        "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    ] {
+        let asked = format!("http://{name}/computeMetadata/v1");
+        let mut checked = entry();
+        checked.check = Some(asked.clone());
+        let mut listed = panels(vec![checked], Vec::new());
+        listed.hosts.push(name.to_owned());
+        assert_eq!(
+            rendered(&listed).err(),
+            Some(Refused::Unreached(asked)),
+            "{name}"
         );
     }
 }

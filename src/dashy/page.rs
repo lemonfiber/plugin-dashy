@@ -2,13 +2,14 @@
 //!
 //! Every value comes from a `dashboard.show@1` request, so from every plugin's entries.
 //! An address is `http` or `https` and nothing a browser runs; an address Dashy's own
-//! server asks, a check or a status page, is also a service on the stack's network,
-//! named by a single label and never an IP address, a name a container's hosts file
-//! holds, a container's id, a metadata or cluster name or a public name, and is written
-//! as it parses; a status page is such a service's origin; an icon is a name of letters,
-//! digits, `.`, `_` and `-`, or such an address; every other value is text with no
-//! control character, no markup and no variable Dashy reads from its environment. The
-//! page is JSON that serde quotes, so no value can carry structure of its own.
+//! server asks, a check or a status page, is also a service on the stack's network: its
+//! host is one of the panel list's `hosts`, the names the core gives a check at, each a
+//! single label and never a name a container's hosts file holds, a container's id or a
+//! metadata or cluster name, and it is written as it parses; a status page is such a service's
+//! origin; an icon is a name of letters, digits, `.`, `_` and `-`, or such an address;
+//! every other value is text with no control character, no markup and no variable Dashy
+//! reads from its environment. The page is JSON that serde quotes, so no value can carry
+//! structure of its own.
 
 use lemonfiber_ports::service::{Entry, EntryWidget, PageWidget, Panels};
 use serde::Serialize;
@@ -81,7 +82,8 @@ pub enum Refused {
     Icon(String),
     /// Text holding a control character, markup or something Dashy expands.
     Text(String),
-    /// An address Dashy's server would ask that is not a service on the stack's network.
+    /// An address Dashy's server would ask whose host is not one of the panel list's
+    /// `hosts`, a service on the stack's network.
     Unreached(String),
 }
 
@@ -97,12 +99,16 @@ pub fn rendered(panels: &Panels) -> Result<String, Refused> {
         .map(|group| {
             Ok(Section {
                 name: text(&group.name)?,
-                items: group.entries.iter().map(item).collect::<Result<_, _>>()?,
+                items: group
+                    .entries
+                    .iter()
+                    .map(|entry| item(entry, &panels.hosts))
+                    .collect::<Result<_, _>>()?,
                 widgets: group
                     .entries
                     .iter()
                     .filter_map(|entry| entry.widget.as_ref())
-                    .map(entry_widget)
+                    .map(|widget| entry_widget(widget, &panels.hosts))
                     .collect::<Result<_, _>>()?,
             })
         })
@@ -222,8 +228,8 @@ struct StatusPage {
     slug: String,
 }
 
-/// One entry as Dashy reads it, every value held to its grammar.
-fn item(entry: &Entry) -> Result<Item, Refused> {
+/// One entry as Dashy reads it, every value held to its grammar and its check to `hosts`.
+fn item(entry: &Entry, hosts: &[String]) -> Result<Item, Refused> {
     Ok(Item {
         title: text(&entry.name)?,
         description: text(&entry.description)?,
@@ -233,20 +239,20 @@ fn item(entry: &Entry) -> Result<Item, Refused> {
         status_check_url: entry
             .check
             .as_deref()
-            .map(|check| reached(check).map(String::from))
+            .map(|check| reached(check, hosts).map(String::from))
             .transpose()?,
     })
 }
 
 /// One entry's widget as Dashy reads it, read through Dashy's own server, which reaches
-/// only the addresses the page names.
-fn entry_widget(widget: &EntryWidget) -> Result<Widget, Refused> {
+/// only the addresses the page names, each on one of `hosts`.
+fn entry_widget(widget: &EntryWidget, hosts: &[String]) -> Result<Widget, Refused> {
     match widget {
         EntryWidget::StatusPage { url, page } => Ok(Widget {
             kind: STATUS_PAGE.to_owned(),
             use_proxy: Some(true),
             options: Some(StatusPage {
-                host: origin(url)?,
+                host: origin(url, hosts)?,
                 slug: slug(page)?,
             }),
         }),
@@ -298,15 +304,16 @@ fn address(value: &str) -> Result<String, Refused> {
 }
 
 /// `value` parsed, where it is an address of a service on the stack's network: `http` or
-/// `https`, with no account and no fragment, and a host that is one label of a service's
-/// name.
-fn reached(value: &str) -> Result<url::Url, Refused> {
+/// `https`, with no account and no fragment, and a host that is one of `hosts` and one
+/// label of a service's name.
+fn reached(value: &str, hosts: &[String]) -> Result<url::Url, Refused> {
     let asked = address(value)?;
     let parsed = url::Url::parse(&asked).map_err(|_| Refused::Unreached(asked.clone()))?;
     let served = ASKED_OVER.contains(&parsed.scheme())
         && parsed.username().is_empty()
         && parsed.password().is_none()
-        && matches!(parsed.host(), Some(url::Host::Domain(name)) if stack_name(name));
+        && matches!(parsed.host(), Some(url::Host::Domain(name))
+            if stack_name(name) && hosts.iter().any(|host| host == name));
     if !served {
         Err(Refused::Unreached(asked))
     } else if parsed.fragment().is_some() {
@@ -318,8 +325,8 @@ fn reached(value: &str) -> Result<url::Url, Refused> {
 
 /// The origin `value` names, `scheme://host[:port]`, where it is an address of a service on
 /// the stack's network with no path and no query.
-fn origin(value: &str) -> Result<String, Refused> {
-    let parsed = reached(value)?;
+fn origin(value: &str, hosts: &[String]) -> Result<String, Refused> {
+    let parsed = reached(value, hosts)?;
     if parsed.path() == "/" && parsed.query().is_none() {
         Ok(parsed.origin().ascii_serialization())
     } else {
