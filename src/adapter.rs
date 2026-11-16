@@ -18,8 +18,7 @@ pub const UPSTREAM: &str = "Dashy";
 /// The Dashy release this adapter's recordings were taken from.
 pub const RELEASE: &str = "4.9.0";
 
-/// The digest of the image that release's recordings were taken from.
-pub const DIGEST: &str = "sha256:06e91ea4bc85f77253f3a5e728a397116e579000358e0fdaba5067ce939c2dff";
+include!(concat!(env!("OUT_DIR"), "/fronted.rs"));
 
 /// What this adapter says it is: the contract it speaks and the release it supports.
 #[must_use]

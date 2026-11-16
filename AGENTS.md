@@ -24,10 +24,13 @@ says how the catalogue pins this repository and how lemonfiber carries it.
   configuration directory, the settings and the journal keep their names. It is a
   substitute: no service declares `replaces`.
 - **Dashy runs `lemonfiber-dashy`'s image** (`OPS-R93`). That image holds Dashy's
-  `/cors-proxy` and `/status-check` to the addresses the page names, follows no
-  redirect and refuses every ping; `dashy.unnamed-refused`, `dashy.named-check-answers`,
-  `dashy.redirect-not-followed` and `dashy.pings-nothing` hold it there, against the
-  addresses of Dashy's own that `config/dashy/conf.yml` names.
+  `/status-check` to the checks the page names, with no header or option a caller
+  adds, and `/cors-proxy` to a GET of the status pages it names; neither follows a
+  redirect, and every ping is refused. `dashy.unnamed-refused`,
+  `dashy.named-check-answers`, `dashy.redirect-not-followed`,
+  `dashy.check-takes-no-header`, `dashy.proxy-forwards-only-get` and
+  `dashy.pings-nothing` hold it there, against the addresses of Dashy's own that
+  `config/dashy/conf.yml` names.
 - **Every page sets `appConfig.preventWriteToDisk` and `disableConfiguration`**, the
   one this plugin ships and every one the adapter writes, and `dashy.save-refused`
   holds Dashy to refusing a save. Dashy's REST API stays off: `ENABLE_API` is never set.
@@ -60,6 +63,9 @@ says how the catalogue pins this repository and how lemonfiber carries it.
   last written nor the one this plugin ships is named in the refusal.
 - **The core's crates move with the train.** The `rev` in `Cargo.toml` is the
   core commit `targets.toml` names, the same for every `lemonfiber-*` crate.
-- **Moving Dashy's digest** means recording every response again against the
-  new image in the same change, moving `RELEASE` and `DIGEST` in
-  `src/adapter.rs` with it, and committing the `proofs.json` the checks write.
+- **Dashy's digest has one home, `plugin.toml`.** `build.rs` reads the digest of the
+  service the adapter fronts from it into `DIGEST`, so the rolling pull request
+  moving the pin moves what the adapter declares with it. Moving Dashy to another
+  release means recording every response again against the new image in the same
+  change, moving `RELEASE` in `src/adapter.rs`, and committing the `proofs.json` the
+  checks write.

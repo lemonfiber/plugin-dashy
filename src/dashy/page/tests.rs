@@ -151,10 +151,10 @@ fn the_page_the_plugin_ships_is_the_dashboard_checking_itself() {
                         "http://dashy:8080/healthz"
                     ),
                     own(
-                        "Proxy",
-                        "Forwards only what this page names",
+                        "API",
+                        "Answers nobody, as this page sets no API",
                         "http://dashy:8080/",
-                        "http://dashy:8080/cors-proxy"
+                        "http://dashy:8080/api"
                     ),
                     own(
                         "Icons",

@@ -1,0 +1,10 @@
+{
+  "recorded_from": "ghcr.io/lemonfiber/dashy@sha256:5e41cb355a4da86e695fcf30fe6545735754bae4be4ba746c55ebf2fa15bac53",
+  "note": "A POST to Dashy's forwarding endpoint by a caller presenting nothing, on a fresh instance started from the plugin's own conf.yml. The 405 is the pass: the proxy forwards a GET alone, so no caller changes anything through it.",
+  "request": {"method": "POST", "path": "/cors-proxy"},
+  "response": {
+    "status": 405,
+    "headers": {"content-type": "application/json; charset=utf-8"},
+    "json": {"error": "Only a GET is forwarded"}
+  }
+}

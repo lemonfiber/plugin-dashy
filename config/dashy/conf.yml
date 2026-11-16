@@ -19,12 +19,12 @@
           "statusCheckUrl": "http://dashy:8080/healthz"
         },
         {
-          "title": "Proxy",
-          "description": "Forwards only what this page names",
+          "title": "API",
+          "description": "Answers nobody, as this page sets no API",
           "icon": "hl-dashy",
           "url": "http://dashy:8080/",
           "statusCheck": true,
-          "statusCheckUrl": "http://dashy:8080/cors-proxy"
+          "statusCheckUrl": "http://dashy:8080/api"
         },
         {
           "title": "Icons",
