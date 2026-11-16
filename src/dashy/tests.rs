@@ -47,6 +47,7 @@ fn panels() -> Panels {
             }],
         }],
         widgets: vec![PageWidget::Resources],
+        hosts: Vec::new(),
     }
 }
 
@@ -75,6 +76,7 @@ async fn the_shipped_page_shows_nothing_of_lemonfibers() {
         Some(Panels {
             groups: Vec::new(),
             widgets: Vec::new(),
+            hosts: Vec::new(),
         })
     );
 }

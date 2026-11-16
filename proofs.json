@@ -1,5 +1,5 @@
 {
-  "lemonfiber": "ec332f86b6c4a0653264bb171c62f545db29c2e4",
+  "lemonfiber": "bf1008d7fa1e8a1d54106cb3ed37eed1245a8e62",
   "against": "recordings",
   "proofs": [
     {
@@ -22,6 +22,18 @@
     },
     {
       "id": "dashy.pings-nothing",
+      "kind": "proof",
+      "outcome": "passed",
+      "detail": ""
+    },
+    {
+      "id": "dashy.named-check-answers",
+      "kind": "proof",
+      "outcome": "passed",
+      "detail": ""
+    },
+    {
+      "id": "dashy.redirect-not-followed",
       "kind": "proof",
       "outcome": "passed",
       "detail": ""
