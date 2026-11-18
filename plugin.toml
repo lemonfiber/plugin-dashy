@@ -160,6 +160,20 @@ header or body, to a status page the page names, so a caller can change
 nothing anywhere through it.
 """
 
+[[proof]]
+id      = "dashy.proxy-refuses-unnamed"
+service = "dashy"
+title   = "Dashy's proxy forwards to no address its page does not name"
+request = { method = "GET", path = "/cors-proxy", headers = { "Target-URL" = "http://sonarr:8989/ping" } }
+expect  = { status = 403, json = { error = "Target-URL is not an address this dashboard names" } }
+fixture = "recordings/dashy/proxy-refuses-unnamed.json"
+why     = """
+Dashy's own /cors-proxy forwards to whatever address its caller names in
+Target-URL, for anybody who reaches the page. lemonfiber-dashy's image forwards
+only to a status page the page names, so a GET aimed at a service on the
+stack's network the page does not name is refused before anything is asked.
+"""
+
 [[ask]]
 service    = "dashy"
 capability = "proxy.front"

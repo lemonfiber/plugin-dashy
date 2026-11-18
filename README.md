@@ -21,8 +21,10 @@ endpoints to the addresses the page names, follows no redirect and pings nothing
 `dashy.named-check-answers` to still asking one the page names,
 `dashy.redirect-not-followed` to following no redirect, `dashy.check-takes-no-header`
 to sending no header a caller hands a check, `dashy.proxy-forwards-only-get` to
-forwarding nothing but a GET, and `dashy.pings-nothing` to refusing every ping. The page this plugin ships names Dashy's own addresses for those
-proofs, until the adapter's first write replaces it.
+forwarding nothing but a GET, `dashy.proxy-refuses-unnamed` to forwarding to no
+address the page does not name, and `dashy.pings-nothing` to refusing every ping.
+The page this plugin ships names Dashy's own addresses for those proofs, until the
+adapter's first write replaces it.
 Every page the adapter writes, and the one this plugin ships, sets
 `appConfig.preventWriteToDisk`, so Dashy refuses to save the page for anybody.
 

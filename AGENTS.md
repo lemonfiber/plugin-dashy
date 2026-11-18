@@ -28,9 +28,9 @@ says how the catalogue pins this repository and how lemonfiber carries it.
   adds, and `/cors-proxy` to a GET of the status pages it names; neither follows a
   redirect, and every ping is refused. `dashy.unnamed-refused`,
   `dashy.named-check-answers`, `dashy.redirect-not-followed`,
-  `dashy.check-takes-no-header`, `dashy.proxy-forwards-only-get` and
-  `dashy.pings-nothing` hold it there, against the addresses of Dashy's own that
-  `config/dashy/conf.yml` names.
+  `dashy.check-takes-no-header`, `dashy.proxy-forwards-only-get`,
+  `dashy.proxy-refuses-unnamed` and `dashy.pings-nothing` hold it there, against
+  the addresses of Dashy's own that `config/dashy/conf.yml` names.
 - **Every page sets `appConfig.preventWriteToDisk` and `disableConfiguration`**, the
   one this plugin ships and every one the adapter writes, and `dashy.save-refused`
   holds Dashy to refusing a save. Dashy's REST API stays off: `ENABLE_API` is never set.
