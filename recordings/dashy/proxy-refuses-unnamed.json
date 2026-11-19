@@ -1,0 +1,14 @@
+{
+  "recorded_from": "ghcr.io/lemonfiber/dashy@sha256:5e41cb355a4da86e695fcf30fe6545735754bae4be4ba746c55ebf2fa15bac53",
+  "note": "Dashy's own /cors-proxy asked for a GET with a Target-URL naming a service on the stack's network that the shipped conf.yml does not name, by a caller presenting nothing on a fresh instance. The 403 is the pass: the proxy refuses the address before anything is asked.",
+  "request": {
+    "method": "GET",
+    "path": "/cors-proxy",
+    "headers": {"Target-URL": "http://sonarr:8989/ping"}
+  },
+  "response": {
+    "status": 403,
+    "headers": {"content-type": "application/json; charset=utf-8"},
+    "json": {"error": "Target-URL is not an address this dashboard names"}
+  }
+}
