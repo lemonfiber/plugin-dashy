@@ -14,8 +14,8 @@ forms       = ["full"]
 id          = "dashy"
 name        = "Dashy"
 image       = "ghcr.io/lemonfiber/dashy"
-digest      = "sha256:06e91ea4bc85f77253f3a5e728a397116e579000358e0fdaba5067ce939c2dff"
-tag         = "main-112e17a363e9"
+digest      = "sha256:5e41cb355a4da86e695fcf30fe6545735754bae4be4ba746c55ebf2fa15bac53"
+tag         = "main-2b63cd34bad1"
 port        = 4000
 bind        = "lan"
 listens     = 8080
@@ -104,15 +104,15 @@ refusal, which names no host and so tells nobody what is there.
 id      = "dashy.named-check-answers"
 service = "dashy"
 title   = "Dashy's server still checks an address its page names"
-request = { method = "GET", path = "/status-check?url=http%3A%2F%2Fdashy%3A8080%2Fcors-proxy" }
-expect  = { status = 200, json = { "/successStatus" = false, "/message" = "❌ Service Error - 400 - Bad Request" } }
+request = { method = "GET", path = "/status-check?url=http%3A%2F%2Fdashy%3A8080%2Fapi" }
+expect  = { status = 200, json = { "/successStatus" = false, "/message" = "❌ Service Error - 404 - Not Found" } }
 fixture = "recordings/dashy/named-check-answers.json"
 why     = """
 A dashboard whose server refused every address would hold nobody to anything
 and show every service down. The page the plugin ships names Dashy's own
-forwarding endpoint, which answers a request naming no address with 400, and
-Dashy's server asks it and reports that answer, where an address the page does
-not name is refused before it is asked. So the refusals beside this one are
+`/api`, which answers 404 because the page sets no API, and Dashy's server asks
+it and reports that answer, where an address the page does not name is refused
+before it is asked. So the refusals beside this one are
 the page's names at work rather than a server that asks nothing.
 """
 
@@ -129,6 +129,35 @@ a server following it would reach whatever the redirect says. The page the
 plugin ships names Dashy's icon folder, which Dashy answers with a 301 to the
 same folder with a trailing slash, and Dashy's server refuses to follow even
 that.
+"""
+
+[[proof]]
+id      = "dashy.check-takes-no-header"
+service = "dashy"
+title   = "Dashy's server sends no header a caller hands its status check"
+request = { method = "GET", path = "/status-check?url=http%3A%2F%2Fdashy%3A8080%2Fcors-proxy&headers=%7B%22Target-URL%22%3A%22http%3A%2F%2Fsonarr%3A8989%2Fping%22%7D" }
+expect  = { status = 200, json = { "/successStatus" = false, "/message" = "❌ Service Unavailable: Server resulted in EBLOCKED " } }
+fixture = "recordings/dashy/check-takes-no-header.json"
+why     = """
+A status check that sent the headers its caller names could be aimed at
+Dashy's own /cors-proxy with a Target-URL of the caller's choosing, turning a
+check into a forward to any address. The page names no such check, so the
+check is refused before it is asked, whatever header rides along, and
+lemonfiber-dashy's image sends no caller's header with any check.
+"""
+
+[[proof]]
+id      = "dashy.proxy-forwards-only-get"
+service = "dashy"
+title   = "Dashy's proxy forwards nothing but a GET"
+request = { method = "POST", path = "/cors-proxy" }
+expect  = { status = 405, json = { error = "Only a GET is forwarded" } }
+fixture = "recordings/dashy/proxy-forwards-only-get.json"
+why     = """
+Dashy's own /cors-proxy forwards any method with any body to the address its
+caller names. lemonfiber-dashy's image forwards only a GET, with no caller's
+header or body, to a status page the page names, so a caller can change
+nothing anywhere through it.
 """
 
 [[ask]]

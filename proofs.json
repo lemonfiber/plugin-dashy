@@ -37,6 +37,18 @@
       "kind": "proof",
       "outcome": "passed",
       "detail": ""
+    },
+    {
+      "id": "dashy.check-takes-no-header",
+      "kind": "proof",
+      "outcome": "passed",
+      "detail": ""
+    },
+    {
+      "id": "dashy.proxy-forwards-only-get",
+      "kind": "proof",
+      "outcome": "passed",
+      "detail": ""
     }
   ]
 }
